@@ -4,12 +4,19 @@ WORKDIR /app
 
 RUN apk add --no-cache openssl
 
-COPY package.json pnpm-lock.yaml* ./
+# Copy package files
+COPY package.json package-lock.json* ./
 
-RUN corepack enable && pnpm install --frozen-lockfile --prod
+# Install dependencies using npm
+RUN npm install
 
+# Copy source code
 COPY . .
+
+# Build the application
+RUN npm run build
 
 EXPOSE 3000
 
-CMD ["pnpm", "run", "start:prod"]
+# Use npm instead of pnpm in CMD for consistency
+CMD ["npm", "run", "start:dev"]
